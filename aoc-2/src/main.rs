@@ -1,9 +1,6 @@
-use std::fs::read_to_string;
-
 fn main() {
     // parse inputs
-    let input = read_to_string("input.txt").unwrap();
-    let input = input
+    let input = include_str!("input.txt")
         .split("\n")
         .map(|s| {
             let s = s.splitn(3, " ").collect::<Vec<_>>();
