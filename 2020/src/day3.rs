@@ -1,4 +1,4 @@
-struct Map(Vec<Vec<bool>>);
+pub struct Map(Vec<Vec<bool>>);
 
 impl Map {
     fn height(&self) -> usize {
@@ -10,9 +10,7 @@ impl Map {
             panic!("out of bounds");
         }
 
-        let b = self.0[y][x % self.0[y].len()];
-        eprintln!("getting {:?}: {:?}", (x, y), b);
-        b
+        self.0[y][x % self.0[y].len()]
     }
 
     fn slope(&self, dx: usize, dy: usize) -> impl '_ + Iterator<Item = bool> {
@@ -23,24 +21,26 @@ impl Map {
     }
 }
 
-fn main() {
-    // read input
-    let input = Map(include_str!("input.txt")
+#[aoc_generator(day3)]
+pub fn input_generator(input: &str) -> Map {
+    Map(input
         .lines()
         .map(|s| s.chars().map(|ch| ch == '#').collect::<Vec<_>>())
-        .collect::<Vec<_>>());
+        .collect::<Vec<_>>())
+}
 
-    // part one
-    println!("{}", input.slope(3, 1).filter(|x| *x).count());
+#[aoc(day3, part1)]
+pub fn part_one(input: &Map) -> usize {
+    input.slope(3, 1).filter(|x| *x).count()
+}
 
-    // part two
+#[aoc(day3, part2)]
+pub fn part_two(input: &Map) -> usize {
     let slopes = &[(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)];
 
-    let o = slopes
+    slopes
         .iter()
         .copied()
         .map(|(x, y)| input.slope(x, y).filter(|x| *x).count())
-        .fold(1, |c, n| c * n);
-
-    println!("{}", o);
+        .fold(1, |c, n| c * n)
 }

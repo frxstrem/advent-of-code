@@ -1,6 +1,6 @@
-fn main() {
-    // parse inputs
-    let input = include_str!("input.txt")
+#[aoc_generator(day2)]
+pub fn input_generator(input: &str) -> Vec<(usize, usize, char, String)> {
+    input
         .split("\n")
         .map(|s| {
             let s = s.splitn(3, " ").collect::<Vec<_>>();
@@ -11,24 +11,26 @@ fn main() {
                 .unwrap();
 
             let b = s[1].chars().next().unwrap();
-            let c = s[2];
+            let c = s[2].to_string();
             (a[0], a[1], b, c)
         })
-        .collect::<Vec<_>>();
+        .collect::<Vec<_>>()
+}
 
-    // part one
-    let n = input
+#[aoc(day2, part1)]
+pub fn part_one(input: &[(usize, usize, char, String)]) -> usize {
+    input
         .iter()
         .filter(|(x, y, ch, s)| {
             let n = s.chars().filter(|t| t == ch).count();
             n >= *x && n <= *y
         })
-        .count();
+        .count()
+}
 
-    println!("{}", n);
-
-    // part two
-    let n = input
+#[aoc(day2, part2)]
+pub fn part_two<'a>(input: &[(usize, usize, char, String)]) -> usize {
+    input
         .iter()
         .filter(|(x, y, ch, s)| {
             s.chars()
@@ -38,7 +40,5 @@ fn main() {
                 .count()
                 == 1
         })
-        .count();
-
-    println!("{}", n);
+        .count()
 }

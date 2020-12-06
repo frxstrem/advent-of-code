@@ -1,6 +1,7 @@
-fn main() {
+#[aoc_generator(day1)]
+pub fn input_generator(input: &str) -> Vec<i32> {
     // parse inputs
-    let mut input = include_str!("input.txt")
+    let mut input = input
         .split("\n")
         .map(str::parse)
         .collect::<Result<Vec<i32>, _>>()
@@ -9,22 +10,22 @@ fn main() {
     // sort inputs
     input.sort();
 
-    part_one(&input);
-    part_two(&input);
+    input
 }
 
-fn part_one(input: &[i32]) {
+#[aoc(day1, part1)]
+pub fn part_one(input: &[i32]) -> i32 {
     let (a, b) = find_two_summing_to(input, 2020).expect("not found");
-    println!("answer 1: {} * {} = {}", a, b, a * b);
+    a * b
 }
 
-fn part_two(input: &[i32]) {
+#[aoc(day1, part2)]
+pub fn part_two(input: &[i32]) -> i32 {
     const SUM_TARGET: i32 = 2020;
 
     for (i, a) in input.iter().enumerate() {
         if let Some((b, c)) = find_two_summing_to(&input[i..], SUM_TARGET - a) {
-            println!("answer 2: {} * {} * {} = {}", a, b, c, a * b * c);
-            return;
+            return a * b * c;
         }
     }
 
