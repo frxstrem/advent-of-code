@@ -2,39 +2,33 @@ use itertools::Itertools;
 
 #[aoc_generator(day10)]
 pub fn input_generator(input: &str) -> Vec<usize> {
-    let mut input = input
-        .lines()
-        .map(str::parse)
-        .collect::<Result<Vec<usize>, _>>()
-        .unwrap();
-
-    input.sort();
-
-    input
+    input.lines().map(|line| line.parse().unwrap()).collect()
 }
 
 #[aoc(day10, part1)]
 pub fn part_one(input: &[usize]) -> usize {
-    let (c1, c3) = std::iter::once(&0)
+    let mut input = input.to_vec();
+    input.sort();
+
+    let (c1, c3) = std::iter::once(0)
         .chain(input)
-        .copied()
         .tuple_windows()
         .map(|(x, y)| y - x)
         .chain(std::iter::once(3))
-        .fold((0, 0), |(c1, c3), n| {
-            if n == 1 {
-                (c1 + 1, c3)
-            } else if n == 3 {
-                (c1, c3 + 1)
-            } else {
-                (c1, c3)
-            }
+        .fold((0, 0), |(c1, c3), n| match n {
+            1 => (c1 + 1, c3),
+            2 => (c1, c3),
+            3 => (c1, c3 + 1),
+            _ => panic!(),
         });
     c1 * c3
 }
 
 #[aoc(day10, part2)]
 pub fn part_two(input: &[usize]) -> usize {
+    let mut input = input.to_vec();
+    input.sort();
+
     let target = input.iter().copied().max().unwrap() + 3;
 
     let mut combos = vec![0; target + 1];
