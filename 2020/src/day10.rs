@@ -1,16 +1,18 @@
 use itertools::Itertools;
+use std::hint::unreachable_unchecked;
 
 #[aoc_generator(day10)]
 pub fn input_generator(input: &str) -> Vec<usize> {
-    input.lines().map(|line| line.parse().unwrap()).collect()
+    input
+        .lines()
+        .map(|line| line.parse().unwrap())
+        .sorted()
+        .collect()
 }
 
 #[aoc(day10, part1)]
 pub fn part_one(input: &[usize]) -> usize {
-    let mut input = input.to_vec();
-    input.sort();
-
-    let (c1, c3) = std::iter::once(0)
+    let (c1, c3) = std::iter::once(&0)
         .chain(input)
         .tuple_windows()
         .map(|(x, y)| y - x)
@@ -26,23 +28,25 @@ pub fn part_one(input: &[usize]) -> usize {
 
 #[aoc(day10, part2)]
 pub fn part_two(input: &[usize]) -> usize {
-    let mut input = input.to_vec();
-    input.sort();
+    unsafe {
+        let mut it = input.iter().rev().copied();
 
-    let target = input.iter().copied().max().unwrap() + 3;
+        let mut last = match it.next() {
+            Some(n) => n,
+            None => unreachable_unchecked(),
+        };
+        let mut s = [1, 0, 0];
 
-    let mut combos = vec![0; target + 1];
-    combos[target] = 1;
+        while let Some(n) = it.next() {
+            s = match last - n {
+                1 => [s[0] + s[1] + s[2], s[0], s[1]],
+                2 => [s[0] + s[1], 0, s[0]],
+                3 => [s[0], 0, 0],
+                _ => unreachable_unchecked(),
+            };
+            last = n;
+        }
 
-    input
-        .iter()
-        .rev()
-        .copied()
-        .chain(std::iter::once(0))
-        .for_each(|n| {
-            let c = combos[n + 1] + combos[n + 2] + combos[n + 3];
-            combos[n] = c;
-        });
-
-    combos[0]
+        s[0] + s[1] + s[2]
+    }
 }
